@@ -1,18 +1,16 @@
-package com.example.demad.a2msweather.activities
+package com.example.demad.a2msweather.data.ui.activities
 
-import android.content.Context
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.demad.a2msweather.R
-import com.example.demad.a2msweather.adapters.ForecastListAdapter
+import com.example.demad.a2msweather.data.data.Request
+import com.example.demad.a2msweather.data.ui.adapters.ForecastListAdapter
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
-
-fun Context.toast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
-    Toast.makeText(this, message, duration).show()
-}
+import org.jetbrains.anko.uiThread
 
 class MainActivity : AppCompatActivity() {
     private val items = listOf(
@@ -30,9 +28,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         //using Anko
         val forecastList: RecyclerView = find(R.id.forecast_list)
-//        forecastList.layoutManager = LinearLayoutManager(this)
+//        val forecastList = findViewById<RecyclerView>(R.id.forecast_list)
+        forecastList.layoutManager = LinearLayoutManager(this)
         forecastList.adapter = ForecastListAdapter(items)
-        longToast("weather")
-        toast("fun")
+
+        //Anko provides a very easy DSL to deal with asynchronous, which fits most basic needs.
+        val url = "http://api.openweathermap.org/data/2.5/forecast/daily?" +
+                "APPID=15646a06818f61f7b8d7823ca833e1ce&q=94043&mode=json&units=metric&cnt=7"
+
+        doAsync {
+            Request(url).run()
+            uiThread { longToast("Request performed") }
+        }
     }
 }

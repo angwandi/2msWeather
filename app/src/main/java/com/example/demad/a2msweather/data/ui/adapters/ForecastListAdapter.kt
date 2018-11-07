@@ -1,4 +1,4 @@
-package com.example.demad.a2msweather.adapters
+package com.example.demad.a2msweather.data.ui.adapters
 
 import android.view.ViewGroup
 import android.widget.TextView
